@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Rota Seca – Documentação DDD Java</title>
+<!--
+  COMO GERAR O PDF: preencha os campos marcados com ⟨...⟩ (integrantes, RMs, links) e rode, na pasta ddd-java:
+  powershell -ExecutionPolicy Bypass -File docs/gerar-pdf.ps1
+-->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  :root { --azul: #0b4f7c; --azul-claro: #e7f1f8; --cinza: #5b6670; --borda: #d5dde3; --alerta: #c62828; --ok: #2e7d32; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1d2329; font-size: 10pt; line-height: 1.38; margin: 0; background: #fff; }
+  h1 { color: var(--azul); font-size: 20pt; margin: 0 0 10px; border-bottom: 3px solid var(--azul); padding-bottom: 6px; }
+  h2 { color: var(--azul); font-size: 14pt; margin: 22px 0 8px; }
+  h3 { font-size: 12pt; margin: 16px 0 6px; }
+  p { margin: 6px 0; text-align: justify; }
+  .quebra { page-break-before: always; }
+  table { border-collapse: collapse; width: 100%; font-size: 9.5pt; margin: 8px 0; }
+  th, td { border: 1px solid var(--borda); padding: 4px 7px; text-align: left; vertical-align: top; }
+  th { background: var(--azul); color: #fff; }
+  tr:nth-child(even) td { background: #f6f9fb; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: #f1f4f6; padding: 0 3px; border-radius: 3px; }
+  pre { font-family: Consolas, monospace; font-size: 8.5pt; background: #f1f4f6; padding: 8px 10px; border-radius: 4px; white-space: pre-wrap; margin: 6px 0; }
+  .metodo { font-weight: 700; font-family: Consolas, monospace; }
+  .GET { color: #1565c0; } .POST { color: var(--ok); } .PUT { color: #ef6c00; } .DELETE { color: var(--alerta); }
+
+  /* Capa */
+  .capa { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .capa .topo { color: var(--cinza); font-size: 10pt; letter-spacing: .5px; }
+  .capa .titulo { font-size: 40pt; color: var(--azul); font-weight: 800; margin: 0; }
+  .capa .sub { font-size: 14pt; color: var(--cinza); margin-top: 4px; }
+  .capa .disc { font-size: 13pt; margin-top: 18px; }
+  .capa table { width: 70%; font-size: 11pt; }
+  .gota { width: 64px; height: 64px; background: var(--azul); border-radius: 0 50% 50% 50%; transform: rotate(45deg); margin-bottom: 18px; }
+
+  /* Índice */
+  .indice ol { font-size: 12pt; line-height: 2; }
+
+  /* Diagramas */
+  .diagrama { border: 1px solid var(--borda); border-radius: 6px; padding: 8px; margin: 8px 0; text-align: center; page-break-inside: avoid; }
+  .diagrama svg { max-height: 205mm; width: auto !important; max-width: 100% !important; }
+  .legenda { font-size: 9pt; color: var(--cinza); text-align: center; margin-top: 4px; }
+
+  /* Protótipos */
+  .telas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; page-break-inside: avoid; }
+  .tela-bloco { width: 56mm; }
+  .celular { width: 56mm; height: 112mm; border: 3px solid #222; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; font-size: 8pt; background: #fafbfc; }
+  .barra { background: var(--azul); color: #fff; padding: 6px 8px; font-weight: 700; font-size: 9pt; display: flex; justify-content: space-between; }
+  .conteudo { padding: 7px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .card { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 6px; }
+  .card.alerta { border: 2px solid var(--alerta); background: #fdecea; }
+  .card.alerta b { color: var(--alerta); }
+  .botao { background: var(--azul); color: #fff; text-align: center; border-radius: 8px; padding: 7px; font-weight: 700; font-size: 9pt; }
+  .botao.secundario { background: #fff; color: var(--azul); border: 2px solid var(--azul); }
+  .botao.vermelho { background: var(--alerta); }
+  .campo { border: 1px solid #9aa5ad; border-radius: 6px; padding: 5px; background: #fff; color: var(--cinza); }
+  .mapa { height: 42mm; border-radius: 8px; background:
+      linear-gradient(90deg, transparent 47%, #c9d3da 47%, #c9d3da 53%, transparent 53%),
+      linear-gradient(0deg, transparent 47%, #c9d3da 47%, #c9d3da 53%, transparent 53%),
+      #eef3e9; position: relative; border: 1px solid var(--borda); }
+  .mapa .agua { position: absolute; left: 8%; bottom: 10%; width: 38%; height: 26%; background: #90caf9; border-radius: 40%; opacity: .85; }
+  .mapa .rota { position: absolute; left: 50%; top: 18%; width: 3px; height: 64%; background: var(--ok); }
+  .mapa .rota2 { position: absolute; left: 50%; top: 18%; width: 38%; height: 3px; background: var(--ok); }
+  .mapa .eu { position: absolute; left: 47%; bottom: 14%; width: 10px; height: 10px; border-radius: 50%; background: #1565c0; border: 2px solid #fff; }
+  .mapa .abrigo { position: absolute; right: 8%; top: 12%; background: var(--ok); color: #fff; font-size: 7pt; padding: 1px 4px; border-radius: 4px; }
+  .nav { display: flex; justify-content: space-around; border-top: 1px solid var(--borda); padding: 5px; font-size: 7.5pt; color: var(--cinza); background: #fff; }
+  .nota { font-size: 8.5pt; color: #333; margin-top: 6px; }
+  .nota b { color: var(--azul); }
+  .painel { border: 3px solid #222; border-radius: 8px; overflow: hidden; font-size: 8pt; page-break-inside: avoid; }
+  .painel .corpo { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 8px; background: #fafbfc; }
+  .kpi { background: #fff; border: 1px solid var(--borda); border-radius: 6px; padding: 6px; }
+  .kpi .num { font-size: 16pt; font-weight: 800; color: var(--azul); }
+  .chip { display: inline-block; border-radius: 10px; padding: 0 6px; font-size: 7pt; font-weight: 700; color: #fff; }
+  .chip.ma { background: #8e0000; } .chip.a { background: var(--alerta); } .chip.m { background: #ef6c00; }
+</style>
+</head>
+<body>
+
+<!-- ================= CAPA ================= -->
+<section class="capa">
+  <div class="topo">FIAP · GLOBAL SOLUTION 2026.2 · CITIZENTECH · ENGENHARIA DE SOFTWARE · 2º ANO (FEV)</div>
+  <div>
+    <div class="gota"></div>
+    <p class="titulo">Rota Seca</p>
+    <div class="sub">Alerta de chuva forte e rota segura para quem mora em área de alagamento</div>
+    <div class="disc"><b>Domain Driven Design – Java</b><br>API RESTful com Spring Boot e banco de dados Oracle</div>
+  </div>
+  <div>
+    <h3>Integrantes</h3>
+    <table>
+      <tr><th>Nome completo</th><th>RM</th></tr>
+      <tr><td>⟨Nome completo 1⟩</td><td>⟨RM⟩</td></tr>
+      <tr><td>⟨Nome completo 2⟩</td><td>⟨RM⟩</td></tr>
+      <tr><td>⟨Nome completo 3⟩</td><td>⟨RM⟩</td></tr>
+      <tr><td>⟨Nome completo 4⟩</td><td>⟨RM⟩</td></tr>
+      <tr><td>⟨Nome completo 5⟩</td><td>⟨RM⟩</td></tr>
+    </table>
+    <p style="color:var(--cinza)">São Paulo · Novembro de 2026</p>
+  </div>
+</section>
+
+<!-- ================= ÍNDICE ================= -->
+<section class="quebra indice">
+  <h1>Índice</h1>
+  <ol>
+    <li>Descritivo da solução</li>
+    <li>Justificativa</li>
+    <li>Objetivos</li>
+    <li>Arquitetura e regras de negócio</li>
+    <li>Diagrama de classes</li>
+    <li>Diagrama Entidade-Relacionamento (DER)</li>
+    <li>Tabela de endpoints</li>
+    <li>Protótipos de tela</li>
+    <li>Instruções para executar o projeto</li>
+  </ol>
+</section>
+
+<!-- ================= 1-3 ================= -->
+<section class="quebra">
+  <h1>1. Descritivo da solução</h1>
+  <p>O <b>Rota Seca</b> é uma CitizenTech que avisa moradores de áreas sujeitas a alagamento quando há risco de chuva forte
+    e indica para onde ir: o ponto de apoio mais adequado (abrigo, escola ou UBS) e quais trechos de rua evitar.
+    O piloto é o <b>Jardim Pantanal</b> e os bairros vizinhos da várzea do Rio Tietê, na Zona Leste de São Paulo.</p>
+  <p>Esta entrega é a <b>API RESTful em Java</b>, o núcleo da solução. Ela guarda e expõe os dados do domínio
+    (bairros, pontos de risco, pontos de apoio, leituras de chuva, alertas, moradores e ocorrências) e concentra as regras de negócio.
+    A principal delas: quando uma leitura de chuva chega à API e a chuva passa de moderada, o sistema gera sozinho um alerta para o bairro,
+    com os trechos a evitar e o ponto de apoio de destino. As outras partes do projeto consomem essa API:
+    o app do morador, o painel da Defesa Civil, o modelo de previsão (Data Science) e o cálculo de rota (Dynamic Programming).</p>
+
+  <h3>Ficha da CitizenTech</h3>
+  <table>
+    <tr><th style="width:28%">Campo</th><th>Resposta</th></tr>
+    <tr><td>Nome</td><td>Rota Seca</td></tr>
+    <tr><td>Cidade e bairro</td><td>São Paulo, Zona Leste: Jardim Pantanal e bairros vizinhos</td></tr>
+    <tr><td>Cidadão beneficiado</td><td>Morador de área de risco, principalmente idosos, pessoas com mobilidade reduzida e quem volta do trabalho a pé ou de transporte público</td></tr>
+    <tr><td>Problema, em uma frase</td><td>Moradores de áreas que alagam não sabem a tempo quando a chuva vai ser forte nem qual caminho é seguro para sair ou voltar para casa</td></tr>
+    <tr><td>Como funciona</td><td>Leitura de chuva → classificação do risco → alerta para o bairro → rota segura até o ponto de apoio</td></tr>
+    <tr><td>Indicador de impacto</td><td>% de alertas emitidos com ao menos 1h de antecedência; nº de ocorrências reportadas; nº de rotas seguras calculadas</td></tr>
+    <tr><td>ODS</td><td>3 (saúde), 10 (desigualdades), 11 (cidades sustentáveis, meta 11.5), 13 (clima, meta 13.1)</td></tr>
+  </table>
+
+  <h1 style="margin-top:22px">2. Justificativa</h1>
+  <p>Os alagamentos fazem parte do verão de São Paulo, e as chuvas intensas ficam mais frequentes com a mudança do clima.
+    Os bairros da várzea do Tietê, na Zona Leste, convivem com ruas e casas alagadas em quase toda temporada de chuvas.
+    Hoje o morador depende de olhar o céu, de grupos de mensagem ou de avisos genéricos para a cidade inteira,
+    que não dizem <i>qual rua</i> evitar nem <i>para onde</i> ir.</p>
+  <p>Quem mais sofre são idosos, pessoas com mobilidade reduzida e trabalhadores que voltam a pé ou de ônibus,
+    porque precisam de mais tempo para sair e têm menos alternativas. Um aviso por bairro, com a rota até um ponto de apoio,
+    é uma solução simples e barata que funciona mesmo em celulares simples. Por isso a API foi pensada para respostas pequenas e diretas.</p>
+
+  <h1 class="quebra">3. Objetivos</h1>
+  <p><b>Objetivo geral:</b> reduzir o número de pessoas expostas a ruas alagadas nas áreas de risco, avisando com antecedência e indicando um destino seguro.</p>
+  <p><b>Objetivos específicos:</b></p>
+  <ul>
+    <li>Registrar leituras de chuva por bairro e classificar o risco pela escala de intensidade do CGE.</li>
+    <li>Gerar alertas automáticos com trechos a evitar e ponto de apoio de destino, e permitir alertas manuais da Defesa Civil.</li>
+    <li>Manter o cadastro de pontos de risco e pontos de apoio, que o algoritmo de rota usa.</li>
+    <li>Permitir que moradores reportem alagamentos (ocorrências), alimentando o histórico de cada ponto de risco.</li>
+    <li>Priorizar idosos e pessoas com mobilidade reduzida.</li>
+    <li>Disponibilizar tudo em uma API REST pública, documentada (Swagger) e publicada no Render.</li>
+  </ul>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="quebra">
+  <h1>4. Arquitetura e regras de negócio</h1>
+  <p>A aplicação segue as camadas trabalhadas em aula. Cada camada só conversa com a camada de baixo:</p>
+  <table>
+    <tr><th style="width:18%">Camada</th><th style="width:22%">Pacote</th><th>Responsabilidade</th></tr>
+    <tr><td>Controller</td><td><code>controller</code></td><td>Recebe as requisições HTTP, valida o corpo com Bean Validation (<code>@Valid</code>) e devolve o status correto (200, 201 + Location, 204).</td></tr>
+    <tr><td>BO (Business Object)</td><td><code>bo</code></td><td>Regras de negócio e validações que dependem do banco. Controla as transações (<code>@Transactional</code>).</td></tr>
+    <tr><td>DAO (Data Access Object)</td><td><code>dao</code></td><td>SQL puro com <code>JdbcTemplate</code>: INSERT (com retorno do id gerado), SELECT, UPDATE e DELETE de cada tabela.</td></tr>
+    <tr><td>Model</td><td><code>model</code></td><td>Classes de domínio, uma por tabela, com as validações de campo, e os enums do domínio.</td></tr>
+    <tr><td>Exceções</td><td><code>exception</code></td><td>Exceções do domínio e o <code>GlobalExceptionHandler</code> (<code>@RestControllerAdvice</code>), que transforma qualquer erro em JSON padronizado.</td></tr>
+  </table>
+
+  <h3>Regras de negócio implementadas</h3>
+  <table>
+    <tr><th style="width:4%">#</th><th style="width:26%">Regra</th><th>Onde / como</th></tr>
+    <tr><td>1</td><td>Classificação da chuva</td><td><code>NivelRisco.porPrecipitacao()</code>: &lt;10 mm/h BAIXO · ≥10 MODERADO · ≥25 ALTO · ≥50 MUITO_ALTO (escala do CGE-SP).</td></tr>
+    <tr><td>2</td><td>Alerta automático</td><td><code>LeituraChuvaBO.registrar()</code>: a partir de MODERADO, chama <code>AlertaBO.gerarParaLeitura()</code>, que monta a mensagem com os 2 pontos de risco mais graves do bairro e o ponto de apoio ativo de maior capacidade. O alerta vale por 3 h. Leitura e alerta são gravados na mesma transação.</td></tr>
+    <tr><td>3</td><td>Público prioritário</td><td><code>Morador.isPrioritario()</code>: 60 anos ou mais, ou mobilidade reduzida. Em alerta MUITO_ALTO, a mensagem orienta essas pessoas a sair imediatamente.</td></tr>
+    <tr><td>4</td><td>Histórico do ponto de risco</td><td><code>OcorrenciaBO.registrar()</code>: se a lâmina d'água reportada supera a máxima conhecida, o ponto de risco é atualizado.</td></tr>
+    <tr><td>5</td><td>Ciclo da ocorrência</td><td><code>StatusOcorrencia.podeMudarPara()</code>: ABERTA → EM_ATENDIMENTO → ENCERRADA. Encerrada não reabre (HTTP 422).</td></tr>
+    <tr><td>6</td><td>Consistência</td><td>Bairro único por cidade; telefone único; validade do alerta posterior à emissão; leituras e ocorrências não podem estar no futuro; referências (bairro, leitura, morador, ponto) precisam existir.</td></tr>
+    <tr><td>7</td><td>Exclusão segura</td><td>Excluir um registro que ainda é referenciado (ex.: bairro com moradores) devolve HTTP 409, graças às FKs do banco e ao handler.</td></tr>
+  </table>
+
+  <h3>Tratamento de exceções</h3>
+  <table>
+    <tr><th>Exceção</th><th>HTTP</th><th>Situação</th></tr>
+    <tr><td><code>MethodArgumentNotValidException</code></td><td>400</td><td>Campos inválidos; a resposta lista cada campo e a mensagem</td></tr>
+    <tr><td><code>HttpMessageNotReadableException</code></td><td>400</td><td>JSON malformado, enum ou data inválidos</td></tr>
+    <tr><td><code>RecursoNaoEncontradoException</code></td><td>404</td><td>Id inexistente</td></tr>
+    <tr><td><code>DataIntegrityViolationException</code></td><td>409</td><td>Duplicidade ou registro referenciado</td></tr>
+    <tr><td><code>RegraNegocioException</code></td><td>422</td><td>Regra de negócio violada</td></tr>
+    <tr><td><code>DataAccessException</code> / <code>Exception</code></td><td>503 / 500</td><td>Falha no banco / erro inesperado (registrado em log)</td></tr>
+  </table>
+  <pre>{ "timestamp": "2026-11-16T18:30:00", "status": 422, "erro": "Unprocessable Entity",
+  "mensagem": "Não é possível mudar a ocorrência de ENCERRADA para ABERTA", "caminho": "/api/ocorrencias/1" }</pre>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="quebra">
+  <h1>5. Diagrama de classes</h1>
+  <h3>5.1 Camada model (domínio)</h3>
+  <div class="diagrama">
+<pre class="mermaid">
+classDiagram
+  direction LR
+  class Bairro {
+    -Long id
+    -String nome
+    -String regiao
+    -String cidade
+    -Integer populacao
+  }
+  class PontoRisco {
+    -Long id
+    -Long bairroId
+    -String local
+    -Double latitude
+    -Double longitude
+    -NivelRisco nivelRisco
+    -Double laminaMaximaCm
+  }
+  class PontoApoio {
+    -Long id
+    -Long bairroId
+    -String nome
+    -TipoPontoApoio tipo
+    -String endereco
+    -Double latitude
+    -Double longitude
+    -Integer capacidade
+    -Boolean ativo
+  }
+  class LeituraChuva {
+    -Long id
+    -Long bairroId
+    -LocalDateTime dataHora
+    -Double precipitacaoMm
+    -Double umidade
+    -String fonte
+    +calcularNivelRisco() NivelRisco
+  }
+  class Alerta {
+    -Long id
+    -Long bairroId
+    -Long leituraId
+    -NivelRisco nivel
+    -String mensagem
+    -LocalDateTime dataEmissao
+    -LocalDateTime dataValidade
+    +estaAtivo(LocalDateTime) boolean
+  }
+  class Morador {
+    -Long id
+    -Long bairroId
+    -String nome
+    -String telefone
+    -LocalDate dataNascimento
+    -Boolean mobilidadeReduzida
+    -Boolean recebeAlerta
+    +isPrioritario() boolean
+  }
+  class Ocorrencia {
+    -Long id
+    -Long pontoRiscoId
+    -Long moradorId
+    -LocalDateTime dataHora
+    -Double laminaCm
+    -String observacao
+    -StatusOcorrencia status
+  }
+  class NivelRisco {
+    &lt;&lt;enumeration&gt;&gt;
+    BAIXO
+    MODERADO
+    ALTO
+    MUITO_ALTO
+    +porPrecipitacao(double) NivelRisco$
+    +geraAlerta() boolean
+  }
+  class TipoPontoApoio {
+    &lt;&lt;enumeration&gt;&gt;
+    ABRIGO
+    ESCOLA
+    UBS
+    OUTRO
+  }
+  class StatusOcorrencia {
+    &lt;&lt;enumeration&gt;&gt;
+    ABERTA
+    EM_ATENDIMENTO
+    ENCERRADA
+    +podeMudarPara(StatusOcorrencia) boolean
+  }
+  class RegistroLeitura {
+    &lt;&lt;record&gt;&gt;
+    +LeituraChuva leitura
+    +NivelRisco nivelRisco
+    +Alerta alertaGerado
+  }
+  Bairro "1" <-- "0..*" PontoRisco
+  Bairro "1" <-- "0..*" PontoApoio
+  Bairro "1" <-- "0..*" LeituraChuva
+  Bairro "1" <-- "0..*" Alerta
+  Bairro "1" <-- "0..*" Morador
+  LeituraChuva "0..1" <-- "0..*" Alerta
+  PontoRisco "1" <-- "0..*" Ocorrencia
+  Morador "0..1" <-- "0..*" Ocorrencia
+  PontoRisco ..> NivelRisco
+  Alerta ..> NivelRisco
+  PontoApoio ..> TipoPontoApoio
+  Ocorrencia ..> StatusOcorrencia
+  RegistroLeitura o-- LeituraChuva
+  RegistroLeitura o-- Alerta
+</pre>
+  </div>
+  <div class="legenda">Todos os atributos têm getters e setters públicos (omitidos). As associações são feitas pelos ids, como nas FKs do banco.</div>
+</section>
+
+<section class="quebra">
+  <h3>5.2 Camadas controller → BO → DAO (fluxo de leitura de chuva e alerta)</h3>
+  <div class="diagrama">
+<pre class="mermaid">
+classDiagram
+  direction TB
+  class LeituraChuvaController {
+    -LeituraChuvaBO bo
+    +listar(Long bairroId) List~LeituraChuva~
+    +buscar(Long id) LeituraChuva
+    +registrar(LeituraChuva) ResponseEntity~RegistroLeitura~
+    +atualizar(Long, LeituraChuva) LeituraChuva
+    +excluir(Long) ResponseEntity~Void~
+  }
+  class LeituraChuvaBO {
+    -LeituraChuvaDAO dao
+    -BairroBO bairroBO
+    -AlertaBO alertaBO
+    +listar(Long) List~LeituraChuva~
+    +buscarPorId(Long) LeituraChuva
+    +registrar(LeituraChuva) RegistroLeitura
+    +atualizar(Long, LeituraChuva) LeituraChuva
+    +excluir(Long) void
+    -validar(LeituraChuva) void
+  }
+  class AlertaBO {
+    -AlertaDAO dao
+    -LeituraChuvaDAO leituraDAO
+    -PontoRiscoDAO pontoRiscoDAO
+    -PontoApoioDAO pontoApoioDAO
+    -BairroBO bairroBO
+    +listarAtivos(Long) List~Alerta~
+    +cadastrar(Alerta) Alerta
+    +atualizar(Long, Alerta) Alerta
+    +gerarParaLeitura(LeituraChuva, NivelRisco) Alerta
+    -montarMensagem(...) String
+  }
+  class BairroBO {
+    -BairroDAO dao
+    +buscarPorId(Long) Bairro
+    +validarExistencia(Long) void
+  }
+  class LeituraChuvaDAO {
+    -JdbcTemplate jdbc
+    +listar() List~LeituraChuva~
+    +listarPorBairro(Long) List~LeituraChuva~
+    +buscarPorId(Long) Optional~LeituraChuva~
+    +inserir(LeituraChuva) LeituraChuva
+    +atualizar(LeituraChuva) boolean
+    +excluir(Long) boolean
+  }
+  class AlertaDAO {
+    -JdbcTemplate jdbc
+    +listarAtivos(LocalDateTime, Long) List~Alerta~
+    +inserir(Alerta) Alerta
+  }
+  class PontoRiscoDAO {
+    +listarPorBairro(Long) List~PontoRisco~
+  }
+  class PontoApoioDAO {
+    +listarAtivosPorBairro(Long) List~PontoApoio~
+  }
+  class BairroDAO {
+    +buscarPorId(Long) Optional~Bairro~
+    +existe(Long) boolean
+  }
+  LeituraChuvaController --> LeituraChuvaBO
+  LeituraChuvaBO --> LeituraChuvaDAO
+  LeituraChuvaBO --> BairroBO
+  LeituraChuvaBO --> AlertaBO
+  AlertaBO --> AlertaDAO
+  AlertaBO --> LeituraChuvaDAO
+  AlertaBO --> PontoRiscoDAO
+  AlertaBO --> PontoApoioDAO
+  AlertaBO --> BairroBO
+  BairroBO --> BairroDAO
+</pre>
+  </div>
+  <div class="legenda">As demais entidades seguem o mesmo padrão: <code>XController → XBO → XDAO</code>, cada uma com listar, buscarPorId, cadastrar/inserir, atualizar e excluir.</div>
+
+  <h3 class="quebra">5.3 Camada de exceções</h3>
+  <div class="diagrama">
+<pre class="mermaid">
+classDiagram
+  direction LR
+  class RuntimeException
+  class RecursoNaoEncontradoException {
+    +RecursoNaoEncontradoException(String recurso, Long id)
+  }
+  class RegraNegocioException {
+    +RegraNegocioException(String mensagem)
+  }
+  class GlobalExceptionHandler {
+    &lt;&lt;RestControllerAdvice&gt;&gt;
+    +naoEncontrado() ResponseEntity~ErroResposta~
+    +regraNegocio() ResponseEntity~ErroResposta~
+    +validacao() ResponseEntity~ErroResposta~
+    +jsonInvalido() ResponseEntity~ErroResposta~
+    +integridade() ResponseEntity~ErroResposta~
+    +banco() ResponseEntity~ErroResposta~
+    +inesperado() ResponseEntity~ErroResposta~
+  }
+  class ErroResposta {
+    &lt;&lt;record&gt;&gt;
+    +LocalDateTime timestamp
+    +int status
+    +String erro
+    +String mensagem
+    +String caminho
+    +List~CampoInvalido~ campos
+  }
+  RuntimeException <|-- RecursoNaoEncontradoException
+  RuntimeException <|-- RegraNegocioException
+  GlobalExceptionHandler ..> ErroResposta
+  GlobalExceptionHandler ..> RecursoNaoEncontradoException
+  GlobalExceptionHandler ..> RegraNegocioException
+</pre>
+  </div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="quebra">
+  <h1>6. Diagrama Entidade-Relacionamento (DER)</h1>
+  <div class="diagrama">
+<pre class="mermaid">
+erDiagram
+  RS_BAIRRO ||--o{ RS_PONTO_RISCO : "possui"
+  RS_BAIRRO ||--o{ RS_PONTO_APOIO : "possui"
+  RS_BAIRRO ||--o{ RS_LEITURA_CHUVA : "recebe"
+  RS_BAIRRO ||--o{ RS_ALERTA : "recebe"
+  RS_BAIRRO ||--o{ RS_MORADOR : "abriga"
+  RS_LEITURA_CHUVA |o--o{ RS_ALERTA : "origina"
+  RS_PONTO_RISCO ||--o{ RS_OCORRENCIA : "registra"
+  RS_MORADOR |o--o{ RS_OCORRENCIA : "reporta"
+  RS_BAIRRO {
+    NUMBER ID_BAIRRO PK
+    VARCHAR2 NM_BAIRRO "UK"
+    VARCHAR2 NM_REGIAO
+    VARCHAR2 NM_CIDADE "UK"
+    NUMBER NR_POPULACAO
+  }
+  RS_PONTO_RISCO {
+    NUMBER ID_PONTO_RISCO PK
+    NUMBER ID_BAIRRO FK
+    VARCHAR2 DS_LOCAL
+    NUMBER NR_LATITUDE
+    NUMBER NR_LONGITUDE
+    VARCHAR2 DS_NIVEL_RISCO
+    NUMBER NR_LAMINA_MAX_CM
+  }
+  RS_PONTO_APOIO {
+    NUMBER ID_PONTO_APOIO PK
+    NUMBER ID_BAIRRO FK
+    VARCHAR2 NM_PONTO
+    VARCHAR2 DS_TIPO
+    VARCHAR2 DS_ENDERECO
+    NUMBER NR_LATITUDE
+    NUMBER NR_LONGITUDE
+    NUMBER NR_CAPACIDADE
+    CHAR ST_ATIVO
+  }
+  RS_LEITURA_CHUVA {
+    NUMBER ID_LEITURA PK
+    NUMBER ID_BAIRRO FK
+    TIMESTAMP DT_LEITURA
+    NUMBER VL_PRECIPITACAO_MM
+    NUMBER VL_UMIDADE
+    VARCHAR2 DS_FONTE
+  }
+  RS_ALERTA {
+    NUMBER ID_ALERTA PK
+    NUMBER ID_BAIRRO FK
+    NUMBER ID_LEITURA FK "nulo"
+    VARCHAR2 DS_NIVEL
+    VARCHAR2 DS_MENSAGEM
+    TIMESTAMP DT_EMISSAO
+    TIMESTAMP DT_VALIDADE
+  }
+  RS_MORADOR {
+    NUMBER ID_MORADOR PK
+    NUMBER ID_BAIRRO FK
+    VARCHAR2 NM_MORADOR
+    VARCHAR2 NR_TELEFONE "UK"
+    DATE DT_NASCIMENTO
+    CHAR ST_MOBILIDADE_REDUZIDA
+    CHAR ST_RECEBE_ALERTA
+  }
+  RS_OCORRENCIA {
+    NUMBER ID_OCORRENCIA PK
+    NUMBER ID_PONTO_RISCO FK
+    NUMBER ID_MORADOR FK "nulo"
+    TIMESTAMP DT_OCORRENCIA
+    NUMBER NR_LAMINA_CM
+    VARCHAR2 DS_OBSERVACAO
+    VARCHAR2 DS_STATUS
+  }
+</pre>
+  </div>
+  <div class="legenda">Chaves primárias geradas por <code>IDENTITY</code>. Restrições CHECK: níveis de risco, tipos de ponto de apoio, status, 'S'/'N', valores não negativos e validade &gt; emissão.</div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="quebra">
+  <h1>7. Tabela de endpoints</h1>
+  <p>Base: <code>⟨URL do deploy no Render⟩</code>. Todos os corpos são JSON. Documentação interativa em <code>/swagger-ui.html</code>.</p>
+  <table>
+    <tr><th style="width:9%">Método</th><th style="width:32%">Endpoint</th><th>Descrição</th><th style="width:15%">Sucesso</th></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/bairros</code></td><td>Lista bairros</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/bairros/{id}</code></td><td>Busca bairro</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/bairros</code></td><td>Cadastra bairro</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/bairros/{id}</code></td><td>Atualiza bairro</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/bairros/{id}</code></td><td>Exclui bairro sem dados ligados</td><td>204 / 409</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/pontos-risco?bairroId=</code></td><td>Lista pontos de risco (filtro opcional)</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/pontos-risco/{id}</code></td><td>Busca ponto de risco</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/pontos-risco</code></td><td>Cadastra ponto de risco</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/pontos-risco/{id}</code></td><td>Atualiza ponto de risco</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/pontos-risco/{id}</code></td><td>Exclui ponto de risco</td><td>204</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/pontos-apoio?bairroId=</code></td><td>Lista pontos de apoio; com bairro, só os ativos, por capacidade</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/pontos-apoio/{id}</code></td><td>Busca ponto de apoio</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/pontos-apoio</code></td><td>Cadastra ponto de apoio</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/pontos-apoio/{id}</code></td><td>Atualiza ponto de apoio</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/pontos-apoio/{id}</code></td><td>Exclui ponto de apoio</td><td>204</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/leituras?bairroId=</code></td><td>Lista leituras de chuva</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/leituras/{id}</code></td><td>Busca leitura</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/leituras</code></td><td>Registra leitura; gera alerta se a chuva for ≥ moderada</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/leituras/{id}</code></td><td>Corrige leitura (sem novo alerta)</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/leituras/{id}</code></td><td>Exclui leitura</td><td>204</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/alertas</code></td><td>Lista alertas</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/alertas/ativos?bairroId=</code></td><td>Alertas em vigor agora</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/alertas/{id}</code></td><td>Busca alerta</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/alertas</code></td><td>Emite alerta manual (Defesa Civil)</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/alertas/{id}</code></td><td>Atualiza alerta (ex.: prorrogar)</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/alertas/{id}</code></td><td>Exclui alerta</td><td>204</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/moradores</code></td><td>Lista moradores</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/moradores/{id}</code></td><td>Busca morador</td><td>200 / 404</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/moradores/{id}/alertas</code></td><td>Alertas ativos no bairro do morador</td><td>200</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/moradores</code></td><td>Cadastra morador</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/moradores/{id}</code></td><td>Atualiza morador</td><td>200</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/moradores/{id}</code></td><td>Exclui morador</td><td>204</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/ocorrencias?status=</code></td><td>Lista ocorrências (filtro opcional)</td><td>200</td></tr>
+    <tr><td class="metodo GET">GET</td><td><code>/api/ocorrencias/{id}</code></td><td>Busca ocorrência</td><td>200 / 404</td></tr>
+    <tr><td class="metodo POST">POST</td><td><code>/api/ocorrencias</code></td><td>Reporta alagamento</td><td>201</td></tr>
+    <tr><td class="metodo PUT">PUT</td><td><code>/api/ocorrencias/{id}</code></td><td>Atualiza ocorrência / avança status</td><td>200 / 422</td></tr>
+    <tr><td class="metodo DELETE">DELETE</td><td><code>/api/ocorrencias/{id}</code></td><td>Exclui ocorrência</td><td>204</td></tr>
+  </table>
+
+  <h3>Exemplo: chuva forte gerando alerta</h3>
+<pre>POST /api/leituras
+{ "bairroId": 3, "precipitacaoMm": 31.5, "fonte": "Sensor simulado" }
+
+201 Created
+{ "leitura": { "id": 6, "bairroId": 3, "dataHora": "2026-11-16T16:15:37", "precipitacaoMm": 31.5, ... },
+  "nivelRisco": "ALTO",
+  "alertaGerado": { "id": 6, "nivel": "ALTO",
+    "mensagem": "Chuva forte em Vila Itaim (31,5 mm/h). Evite: Viela junto à várzea.
+                 Ponto de apoio: Centro Comunitário Vila Itaim, Rua D, 75 (endereço simulado).",
+    "dataEmissao": "2026-11-16T16:15:37", "dataValidade": "2026-11-16T19:15:37" } }</pre>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="quebra">
+  <h1>8. Protótipos de tela</h1>
+  <p>O front-end do morador é pensado para celular: letras grandes, alto contraste, poucas palavras e um botão principal por tela,
+    porque o usuário pode ser idoso, estar na rua e com pressa. Abaixo de cada tela, os endpoints que ela usa.</p>
+
+  <div class="telas">
+    <div class="tela-bloco">
+      <div class="celular">
+        <div class="barra"><span>Rota Seca</span><span>Jd. Pantanal</span></div>
+        <div class="conteudo">
+          <div class="card alerta"><b>⚠ CHUVA MUITO FORTE</b><br>55 mm/h agora. Válido até 21:05.<br><br>
+            Evite: rua do córrego; travessa da escola.<br>
+            <b>Saia agora se tiver dificuldade para andar.</b></div>
+          <div class="botao vermelho">VER ROTA SEGURA</div>
+          <div class="card"><b>Ponto de apoio</b><br>Escola Municipal do Bairro<br>Rua B, 250 · 300 vagas</div>
+          <div class="botao secundario">Reportar alagamento</div>
+        </div>
+        <div class="nav"><span>● Início</span><span>Mapa</span><span>Reportar</span><span>Perfil</span></div>
+      </div>
+      <div class="nota"><b>Tela 1: Início / Alerta.</b> O alerta ocupa o topo, em vermelho, com o que fazer em uma frase.
+        <br><code>GET /api/moradores/{id}/alertas</code><br><code>GET /api/pontos-apoio?bairroId=</code></div>
+    </div>
+
+    <div class="tela-bloco">
+      <div class="celular">
+        <div class="barra"><span>← Rota segura</span><span>8 min</span></div>
+        <div class="conteudo">
+          <div class="mapa"><div class="agua"></div><div class="rota"></div><div class="rota2"></div><div class="eu"></div><div class="abrigo">Escola</div></div>
+          <div class="card"><b>Até: Escola Municipal do Bairro</b><br>650 m a pé · desvia de 2 pontos de alagamento</div>
+          <div class="card">1. Suba pela Rua A (lado alto)<br>2. Vire à direita na Rua B<br>3. Entrada pelo portão lateral</div>
+          <div class="botao">INICIAR</div>
+        </div>
+        <div class="nav"><span>Início</span><span>● Mapa</span><span>Reportar</span><span>Perfil</span></div>
+      </div>
+      <div class="nota"><b>Tela 2: Rota segura.</b> Mapa simples, com a água em azul e o caminho em verde. Instruções curtas, em passos.
+        <br><code>GET /api/pontos-risco?bairroId=</code><br><code>GET /api/pontos-apoio/{id}</code><br>(rota: módulo Dynamic Programming)</div>
+    </div>
+
+    <div class="tela-bloco">
+      <div class="celular">
+        <div class="barra"><span>← Reportar</span><span></span></div>
+        <div class="conteudo">
+          <div class="card"><b>Onde está alagado?</b><div class="campo" style="margin-top:4px">Rua próxima ao córrego ▾</div></div>
+          <div class="card"><b>Até onde a água chega?</b>
+            <div style="display:flex;gap:4px;margin-top:4px;text-align:center">
+              <div class="campo" style="flex:1">Tornozelo<br>~10 cm</div>
+              <div class="campo" style="flex:1;border:2px solid var(--azul);color:var(--azul)"><b>Joelho<br>~50 cm</b></div>
+              <div class="campo" style="flex:1">Cintura<br>~90 cm</div>
+            </div></div>
+          <div class="card"><b>Observação (opcional)</b><div class="campo" style="margin-top:4px;height:12mm">Água entrando nas casas…</div></div>
+          <div class="botao">ENVIAR</div>
+        </div>
+        <div class="nav"><span>Início</span><span>Mapa</span><span>● Reportar</span><span>Perfil</span></div>
+      </div>
+      <div class="nota"><b>Tela 3: Reportar alagamento.</b> A altura da água é escolhida por referência ao corpo (joelho, cintura), mais fácil que pedir centímetros.
+        <br><code>GET /api/pontos-risco?bairroId=</code><br><code>POST /api/ocorrencias</code></div>
+    </div>
+  </div>
+
+  <div style="page-break-inside: avoid"><h3 style="margin-top:14px">Tela 4: Painel da Defesa Civil (desktop)</h3>
+  <div class="painel">
+    <div class="barra"><span>Rota Seca · Painel Defesa Civil · Zona Leste</span><span>16/11/2026 18:10</span></div>
+    <div class="corpo">
+      <div class="kpi"><div>Alertas ativos</div><div class="num">3</div><span class="chip ma">MUITO ALTO 1</span> <span class="chip a">ALTO 1</span> <span class="chip m">MOD. 1</span></div>
+      <div class="kpi"><div>Ocorrências abertas</div><div class="num">7</div>2 em atendimento</div>
+      <div class="kpi"><div>Pontos de apoio ativos</div><div class="num">4 / 5</div>760 vagas</div>
+      <div class="kpi" style="grid-column: span 2"><b>Últimas leituras</b><br>Jd. Pantanal · 55,0 mm/h · 18:00 <span class="chip ma">MUITO ALTO</span><br>Jd. Romano · 31,8 mm/h · 18:00 <span class="chip a">ALTO</span><br>Vila Itaim · 14,2 mm/h · 17:00 <span class="chip m">MODERADO</span></div>
+      <div class="kpi"><b>Emitir alerta manual</b><div class="campo" style="margin:3px 0">Bairro ▾</div><div class="campo" style="margin-bottom:3px">Mensagem…</div><div class="botao" style="padding:4px">EMITIR</div></div>
+    </div>
+  </div>
+  <div class="nota"><b>Tela 4.</b> Visão consolidada para o agente público agir: o que está em alerta, o que está alagado e onde há vagas.
+    <code>GET /api/alertas/ativos</code> · <code>GET /api/ocorrencias?status=ABERTA</code> · <code>GET /api/pontos-apoio</code> · <code>GET /api/leituras</code> · <code>POST /api/alertas</code> · <code>PUT /api/ocorrencias/{id}</code></div></div>
+</section>
+
+<!-- ================= 9 ================= -->
+<section class="quebra">
+  <h1>9. Instruções para executar o projeto</h1>
+  <h3>Links</h3>
+  <table>
+    <tr><th style="width:30%">Item</th><th>Link</th></tr>
+    <tr><td>Repositório GitHub</td><td>⟨https://github.com/usuario/rota-seca⟩ (pasta <code>ddd-java</code>)</td></tr>
+    <tr><td>Deploy (Render)</td><td>⟨https://rota-seca-api.onrender.com⟩</td></tr>
+    <tr><td>Swagger (documentação viva)</td><td>⟨https://rota-seca-api.onrender.com⟩/swagger-ui.html</td></tr>
+  </table>
+
+  <h3>Ferramentas e versões</h3>
+  <table>
+    <tr><th>Ferramenta</th><th>Versão / observação</th></tr>
+    <tr><td>Java JDK</td><td>21 (Eclipse Temurin)</td></tr>
+    <tr><td>Spring Boot</td><td>3.5.6 (Web, JDBC, Validation)</td></tr>
+    <tr><td>Maven</td><td>3.9 ou superior</td></tr>
+    <tr><td>Banco de dados</td><td>Oracle 19c, servidor da FIAP (<code>oracle.fiap.com.br:1521/ORCL</code>), driver ojdbc11</td></tr>
+    <tr><td>Documentação da API</td><td>springdoc-openapi 2.8 (Swagger UI)</td></tr>
+    <tr><td>IDE</td><td>IntelliJ IDEA</td></tr>
+    <tr><td>Cliente SQL</td><td>Oracle SQL Developer</td></tr>
+    <tr><td>Deploy</td><td>Render.com (Web Service com Docker)</td></tr>
+  </table>
+
+  <h3>Passo a passo</h3>
+  <ol>
+    <li><b>Clonar o projeto:</b> <code>git clone ⟨link do repositório⟩</code> e abrir a pasta <code>ddd-java</code> no IntelliJ (ele reconhece o <code>pom.xml</code>).</li>
+    <li><b>Criar as tabelas:</b> no SQL Developer, conectado com o usuário RM, executar <code>src/main/resources/db/schema.sql</code> e depois <code>data.sql</code> (use <code>drop.sql</code> para recriar).</li>
+    <li><b>Configurar as credenciais</b> como variáveis de ambiente (nunca no código):
+      <pre>DB_USER=RM000000
+DB_PASSWORD=sua_senha
+DB_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL   (opcional, já é o padrão)</pre>
+      No IntelliJ: <i>Run → Edit Configurations → Environment variables</i>.</li>
+    <li><b>Executar:</b> rodar a classe <code>RotaSecaApplication</code> ou <code>mvn spring-boot:run</code>. Acessar <code>http://localhost:8080</code>, que abre o Swagger.</li>
+    <li><b>Sem acesso ao Oracle</b> (opcional): <code>mvn spring-boot:run -Dspring-boot.run.profiles=dev</code> sobe com banco H2 em memória já populado.</li>
+    <li><b>Testes:</b> <code>mvn test</code> roda 6 testes de ponta a ponta (CRUD, alerta automático, ciclo de status e erros).</li>
+    <li><b>Deploy no Render:</b> New → Web Service → conectar o repositório → <i>Root Directory</i> <code>ddd-java</code>, <i>Language</i> <code>Docker</code>, plano Free →
+      em <i>Environment</i> cadastrar <code>DB_USER</code> e <code>DB_PASSWORD</code> → Deploy. O <code>Dockerfile</code> compila com Maven e roda o .jar com Java 21.
+      A porta é lida da variável <code>PORT</code> do Render.</li>
+  </ol>
+  <p><b>Observação:</b> no plano gratuito, o Render desliga o serviço após 15 minutos sem uso; o primeiro acesso depois disso pode levar cerca de 1 minuto.</p>
+</section>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose",
+    themeVariables: { fontSize: "13px" }, class: { useMaxWidth: true }, er: { useMaxWidth: true } });
+</script>
+</body>
+</html>

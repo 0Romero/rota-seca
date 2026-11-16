@@ -27,9 +27,8 @@
 
 | Nome | RM |
 |---|---|
-| `<Nome completo>` | `<RM>` |
-| `<Nome completo>` | `<RM>` |
-| `<Nome completo>` | `<RM>` |
+| Felipe Bernardes de Almeida | RM564360 |
+| Guilherme Romero Nogueira de Lima | RM564431 |
 
 ## Estrutura do repositório
 

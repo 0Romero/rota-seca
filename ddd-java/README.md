@@ -3,8 +3,8 @@
 API RESTful em **Spring Boot 3.5** com banco **Oracle (FIAP)**, organizada nas camadas
 `model` → `dao` → `bo` → `controller`, mais a camada `exception` para o tratamento de erros.
 
-- **Deploy (Render):** `<cole aqui a URL do Render>`
-- **Documentação interativa (Swagger):** `<URL do Render>/swagger-ui.html`
+- **Deploy (Render):** https://rota-seca-api-l3hb.onrender.com
+- **Documentação interativa (Swagger):** https://rota-seca-api-l3hb.onrender.com/swagger-ui.html
 
 ## Ferramentas e versões
 

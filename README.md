@@ -12,7 +12,7 @@
 | **Problema, em uma frase** | Moradores de áreas que alagam não sabem a tempo quando a chuva vai ser forte nem qual caminho é seguro para sair ou voltar para casa |
 | **Como funciona** | Leituras de chuva entram no sistema; quando a chuva passa de moderada, um alerta é gerado para o bairro dizendo quais trechos evitar e para qual ponto de apoio (abrigo, escola, UBS) ir; o algoritmo calcula a rota mais segura até esse ponto |
 | **O que cada parte faz** | **Data Science:** prevê chuva forte a partir de dados públicos. **DDD Java:** API que guarda e expõe bairros, pontos de risco, pontos de apoio, leituras, alertas, moradores e ocorrências. **Database Design:** modelo relacional no Oracle. **Dynamic Programming:** rota mais segura no grafo de ruas. **Network:** rede do ponto de apoio que hospeda o servidor. **AR/VR:** vídeo 3D da rua alagada e do trajeto seguro. **Agile:** design da solução, backlog e pitch |
-| **Link do repositório** | `<cole aqui o link do GitHub>` |
+| **Link do repositório** | https://github.com/0Romero/rota-seca |
 | **Indicador de impacto** | % de alertas emitidos com pelo menos 1h de antecedência; nº de rotas seguras calculadas; nº de ocorrências reportadas pelos moradores; redução estimada de pessoas passando por ruas alagadas |
 | **ODS conectados** | **11** (cidades e comunidades sustentáveis), **13** (ação contra a mudança do clima), **3** (saúde e bem-estar), **10** (redução das desigualdades) |
 

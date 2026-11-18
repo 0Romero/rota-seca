@@ -35,10 +35,5 @@
 | Pasta | Disciplina |
 |---|---|
 | [`ddd-java/`](ddd-java/) | Domain Driven Design – Java (API REST Spring Boot + Oracle) |
-| `database/` | Database Design (modelo lógico e scripts SQL) |
-| `data-science/` | Data Science & Statistical Computing (notebook) |
-| `dynamic-programming/` | Dynamic Programming (rota mais segura) |
-| `network/` | Network Architect Solutions (Packet Tracer) |
 
-Uso de IA: registrado em [`prompts.md`](prompts.md).
-Dados: todos os dados pessoais são **simulados**. As fontes de dados públicos estão indicadas em cada pasta.
+Dados: todos os dados pessoais são **simulados**.

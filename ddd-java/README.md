@@ -3,8 +3,16 @@
 API RESTful em **Spring Boot 3.5** com banco **Oracle (FIAP)**, organizada nas camadas
 `model` → `dao` → `bo` → `controller`, mais a camada `exception` para o tratamento de erros.
 
+- **Repositório (GitHub):** https://github.com/0Romero/rota-seca (projeto na pasta `ddd-java`)
 - **Deploy (Render):** https://rota-seca-api-l3hb.onrender.com
 - **Documentação interativa (Swagger):** https://rota-seca-api-l3hb.onrender.com/swagger-ui.html
+
+## Integrantes
+
+| Nome | RM |
+|---|---|
+| Felipe Bernardes de Almeida | RM564360 |
+| Guilherme Romero Nogueira de Lima | RM564431 |
 
 ## Ferramentas e versões
 
